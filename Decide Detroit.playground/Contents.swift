@@ -17,23 +17,32 @@ class Choices: Identifiable {
     }
 }
 
-func createChoiceTree() -> Choices {
-    let og = Choices(title: "", result: "In 1701 you found DETROIT with 200 of your frenchmen")
+func createFrench() -> Choices {
+    let og = Choices(title: "Antoine Cadillac by Sean", result: "In 1701 you, Antoine Cadillac, find DETROIT with 200 of your frenchmen")
     og.addChoice(newTitle: "Kill the Natives", newResult: "You enter war with the natives and lose half your men")
-    og.addChoice(newTitle: "Come together with the natives", newResult: "You sign a treaty with the natives for economic growth purposes")
-    og.addChoice(newTitle: "Call the British", newResult: "You enter war with the natives and lose half your men")
-    og.choiceArr[0].addChoice(newTitle: "Choice 1", newResult: "You clicked Choice 1")
-    og.choiceArr[0].choiceArr[0].addChoice(newTitle: "Choice 1, 1", newResult: "You clicked Choice 1, 1")
-    og.choiceArr[0].addChoice(newTitle: "Choice 2", newResult: "You clicked Choice 2")
+    og.choiceArr[0].addChoice(newTitle: "Focus efforts on rebuilding", newResult: "The British come with eyes set on Detroit")
+    og.choiceArr[0].choiceArr[0].addChoice(newTitle: "Flee to France", newResult: "You go back to France and get locked up for being a coward")
+    og.choiceArr[0].choiceArr[0].addChoice(newTitle: "Stay and fight against the British", newResult: "You die valiantly in battle and the British take over Detroit")
+    og.choiceArr[0].addChoice(newTitle: "Continue to fight the natives", newResult: "You die a cowardly death")
+    og.addChoice(newTitle: "Come together with the natives", newResult: "You sign a treaty with the natives")
+    og.choiceArr[1].addChoice(newTitle: "Start fur trade with Natives", newResult: "Natives are unhappy with trade and ask for bigger cut")
+    og.choiceArr[1].choiceArr[0].addChoice(newTitle: "Give them what they want", newResult: "Create an economic stronghold and build Detroit up")
+    og.choiceArr[1].choiceArr[0].choiceArr.append(og.choiceArr[0])
+    og.choiceArr[1].choiceArr.append(og.choiceArr[0])
+    og.addChoice(newTitle: "Set fire to incoming British ships", newResult: "You anger the British and now they want Detroit")
+    og.choiceArr[2].addChoice(newTitle: "Ask for reinforcements from France", newResult: "They send 400 militia and they all die")
+    og.choiceArr[2].addChoice(newTitle: "Work with the natives to fight British", newResult: "You fight off the first wave of the British but the Natives are weakened")
+    og.choiceArr[2].choiceArr[1].addChoice(newTitle: "Take advantage and kill the natives", newResult: "The British come after and wipe you out")
+    og.choiceArr[2].choiceArr[1].choiceArr.append(og.choiceArr[0].choiceArr[0])
     return og
 }
 
 func createHenryFordTree() -> Choices {
-    let og = Choices(title: "Henry Ford", result: "In 1882, you, a young Henry Ford, finishes your first apprenticeship in the heart of DETROIT")
+    let og = Choices(title: "Henry Ford by Hadi", result: "In 1882, you, a young Henry Ford, finishes your first apprenticeship in the heart of DETROIT")
     og.addChoice(newTitle: "Go work for Thomas Edison", newResult: "Edison stock shoots up by double")
     og.choiceArr[0].addChoice(newTitle: "Continue working for Edison", newResult: "Edison suggests pivoting to something new since illumination is a no longer profitable field")
     og.choiceArr[0].choiceArr[0].addChoice(newTitle: "Pivot to cars", newResult: "You start one of the biggest car companies in the world and change Detroit forever")
-    og.choiceArr[0].choiceArr[0].addChoice(newTitle: "Pivot to medicine", newResult: "You cure cancer and become immortal, the entire world bows to your knees")
+    og.choiceArr[0].choiceArr[0].addChoice(newTitle: "Pivot to medicine", newResult: "You cure cancer and become immortal, the entire world bows to you")
     og.choiceArr[0].addChoice(newTitle: "Quit and start your own company", newResult: "Edison is ANGERED and hires a hitman against you!")
     og.choiceArr[0].choiceArr[1].addChoice(newTitle: "Move to Canada and hide out", newResult: "You stay in hiding for the rest of your life, but its ok because timbits make it worth it")
     og.choiceArr[0].choiceArr[1].addChoice(newTitle: "Hire a hitman back", newResult: "Both of you are killed by eachother")
@@ -49,7 +58,7 @@ func createHenryFordTree() -> Choices {
 }
 
 func modernDetroit() -> Choices {
-    let og = Choices(title: "20th", result: "In the early 20th century a new industry grew up in Detroit – making cars.")
+    let og = Choices(title: "20th Century by Egor", result: "In the early 20th century a new industry grew up in Detroit – making cars.")
     og.addChoice(newTitle: "2001", newResult: "In 2001 a statue of the French founder of Detroit Antoine de la Mothe was erected in the city. Meanwhile, Comerica Park baseball stadium opened in 2000 and Ford Field football stadium opened in 2002.")
     og.choiceArr[0].addChoice(newTitle: "2006", newResult: "The Museum of Contemporary Art Detroit opened in 2006")
     og.choiceArr[0].choiceArr[0].addChoice(newTitle: "2012", newResult: "The Michigan Science Center opened in 2012.")
@@ -60,6 +69,8 @@ func modernDetroit() -> Choices {
 
 struct MyView: View {
     var curr: Choices
+    var titleC: Color
+    var answerC: Color
     var body: some View {
         VStack{
             Text(curr.result).font(
@@ -67,33 +78,61 @@ struct MyView: View {
                     "AmericanTypewriter",
                     fixedSize: 24).weight(.black)
             ).padding(.bottom).frame(alignment: .top)
+            .foregroundColor(titleC)
             VStack{
                 ForEach(curr.choiceArr) { el in
-                    NavigationLink(destination: MyView(curr: el)) {
+                    NavigationLink(destination: MyView(curr: el, titleC: titleC, answerC: answerC)) {
                         Text(el.title).font(
                             .custom(
                                 "AmericanTypewriter",
                                 fixedSize: 20)
-                        ).foregroundColor(.black).padding(.bottom)
+                        ).foregroundColor(answerC).padding(.bottom)
                     }
                 }
             }
-        }.frame(width: 300, height: 900, alignment: .center)
+        }.frame(width: 300, height: 1000, alignment: .center)
     }
 }
 
 struct NewView: View {
     var og: Choices = createHenryFordTree()
+    var titleC: Color
+    var answerC: Color
     var body: some View{
-        NavigationView{
             VStack{
-                MyView(curr: og).navigationTitle(og.title)
-            }.frame(width: 400, height: 1000, alignment: .top)
-        }
-        .accentColor(.black)
+                MyView(curr: og, titleC: titleC, answerC: answerC).navigationBarTitle(og.title, displayMode: .inline)
+            }.frame(width: 400, height: 1100, alignment: .top)
     }
 }
 
+struct MainView: View {
+    
+    var henryFord: Choices = createHenryFordTree()
+    var french: Choices = createFrench()
+    var modern: Choices = modernDetroit()
+    var body: some View{
+        NavigationView{
+                VStack (alignment: .leading, spacing: 0){
+                Text("Choose your story!")
+                        .padding()
+                        .font(.custom(
+                            "AmericanTypewriter",
+                            fixedSize: 32))
+                    NavigationLink(destination: NewView(og: french, titleC: .blue, answerC: .red)){
+                    Text("Antoine Cadillac").padding()
+                }
+                    NavigationLink(destination: NewView(og: henryFord, titleC: .black, answerC: .blue)){
+                    Text("Henry Ford").padding()
+                }
+                    NavigationLink(destination: NewView(og: modern, titleC: .black, answerC: .gray)){
+                    Text("Modern day Detroit").padding()
+                }
+            }
+        }.accentColor(.black)
+        
+    }
+    
+}
 
-var currView = UIHostingController(rootView: NewView())
+var currView = UIHostingController(rootView: MainView())
 PlaygroundPage.current.liveView = currView
